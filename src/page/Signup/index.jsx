@@ -7,18 +7,23 @@ const Input = (props) => (
 );
 
 const validationSchema = yup.object({
+  name: yup.string().required("Digite seu nome"),
   email: yup.string().required("Digite seu e-mail").email("E-mail inválido"),
   password: yup.string().required("Digite sua senha"),
 });
 
-export const Login = () => {
+export const Signup = () => {
   const formik = useFormik({
     onSubmit: async (velues) => {
       await axios({
-        method: "get",
-        auth: { username: velues.email, password: velues.password },
-        baseURL: "http://localhost:5000",
-        url: "/login",
+        method: "post",
+        baseURL: import.meta.env.VITE_URL,
+        url: "/signup",
+        data: {
+          name: velues.name,
+          email: velues.email,
+          password: velues.password,
+        },
       }).then(({ data }) => {
         localStorage.setItem("token", data.accessToken);
       });
@@ -26,6 +31,7 @@ export const Login = () => {
     validationSchema,
     validateOnMount: true,
     initialValues: {
+      name: "",
       email: "",
       password: "",
     },
@@ -34,9 +40,27 @@ export const Login = () => {
   return (
     <div className="w-full h-full flex flex-col md:flex-row ">
       <section className="flex flex-col flex-1 justify-center space-y-6 p-10 md:p-16">
-        <h1 className="text-3xl">Login</h1>
+        <h1 className="text-3xl">Crie sua conta</h1>
 
         <form onSubmit={formik.handleSubmit} className="space-y-6">
+          <div className="flex flex-col space-y-2">
+            <label htmlFor="name">Nome</label>
+
+            <Input
+              type="text"
+              name="name"
+              placeholder="Digite seu nome"
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              disabled={formik.isSubmitting}
+            />
+
+            {formik.touched.name && formik.errors.name && (
+              <div className="text-red-500 text-sm">{formik.errors.name}</div>
+            )}
+          </div>
+
           <div className="flex flex-col space-y-2">
             <label htmlFor="email">E-mail</label>
 
@@ -84,13 +108,13 @@ export const Login = () => {
       </section>
       <section className="flex flex-col justify-center items-center flex-1 bg-blue-500 space-y-6 p-10">
         <h2 className="text-2xl text-grey md:text-3xl ">Bem-vindo ao JG</h2>
-        <p className="text-base text-grey">Não tem uma conta?</p>
+        <p className="text-base text-grey">Já tem uma conta?</p>
 
         <a
-          href="/signup"
+          href="/login"
           className="text-grey px-4 py-2 rounded-full border border-grey"
         >
-          Cadastre-se
+          Acesse
         </a>
       </section>
     </div>

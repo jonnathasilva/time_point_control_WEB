@@ -5,11 +5,16 @@ import "react-toastify/dist/ReactToastify.min.css";
 import { Home } from "./Home";
 import { Login } from "./Login";
 import { Signup } from "./Signup";
+import { ProtectRouter } from "~/components";
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: (
+      <ProtectRouter>
+        <Home />
+      </ProtectRouter>
+    ),
   },
   {
     path: "/login",

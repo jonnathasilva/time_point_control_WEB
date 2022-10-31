@@ -1,7 +1,8 @@
 import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Input = (props) => (
   <input {...props} className="bg-grey p-2 outline-none rounded-full" />
@@ -13,16 +14,22 @@ const validationSchema = yup.object({
 });
 
 export const Login = () => {
+  const navigate = useNavigate();
   const formik = useFormik({
     onSubmit: async (velues) => {
       await axios({
         method: "get",
         auth: { username: velues.email, password: velues.password },
-        baseURL: "http://localhost:5000",
+        baseURL: import.meta.env.VITE_URL,
         url: "/login",
-      }).then(({ data }) => {
-        localStorage.setItem("token", data.accessToken);
-      });
+      })
+        .then(({ data }) => {
+          localStorage.setItem("token", data.accessToken);
+          navigate("/");
+        })
+        .catch((err) => {
+          toast.error(err.response?.data?.message);
+        });
     },
     validationSchema,
     validateOnMount: true,

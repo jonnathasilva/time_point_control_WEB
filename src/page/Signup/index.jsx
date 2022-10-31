@@ -1,7 +1,7 @@
 import { useFormik } from "formik";
 import * as yup from "yup";
 import axios from "axios";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Input = (props) => (
   <input {...props} className="bg-grey p-2 outline-none rounded-full" />
@@ -14,6 +14,7 @@ const validationSchema = yup.object({
 });
 
 export const Signup = () => {
+  const navigate = useNavigate();
   const formik = useFormik({
     onSubmit: async (velues) => {
       await axios({
@@ -27,6 +28,7 @@ export const Signup = () => {
         },
       }).then(({ data }) => {
         localStorage.setItem("token", data.accessToken);
+        navigate("/");
       });
     },
     validationSchema,
